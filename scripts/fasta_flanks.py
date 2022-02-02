@@ -7,7 +7,7 @@ import os
 from Bio import SeqIO
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-i', dest='file', type=str, help='Input file name')
+parser.add_argument('-i', dest='file', type=str, help='Input file name',required=True)
 parser.add_argument('-o', dest='outfile', type=str, help='Output file name', default=False)
 parser.add_argument('-l', dest='lead', action='store_true', help='Sequence lead to retain in bp', default=1000)
 parser.add_argument('-t', dest='trail', action='store_true', help='Sequence trail to retain in bp', default=1000)
