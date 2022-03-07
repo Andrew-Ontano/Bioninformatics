@@ -7,6 +7,7 @@ suppressPackageStartupMessages(library(plyr))
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(optparse))
+suppressPackageStartupMessages(library(forcats))
 
 option_list <- list(
   make_option(c("-f","--flanks"), type="character", default=NULL,
@@ -95,7 +96,10 @@ repeats_produce <- function(species,fileFlank,fileCenter,fileLength,colsString,s
   flankValues$Side="Flank"
   df <- bind_rows(flankValues,centerValues)
   
-  ggplot(df,aes(fill=name,y=value,x=reorder(Scaffold,desc(Length)))) + geom_bar(stat="identity",position="stack")
+  df %>% mutate(Scaffold = fct_reorder(Scaffold, Length)) %>% ggplot(aes(fill=name,y=value,x=Scaffold)) + geom_bar(stat="identity",position="stack") +
+	theme(text=element_text(size=6),axis.text.x=element_blank())
+
+  #ggplot(df,aes(fill=name,y=value,x=reorder(Scaffold,desc(Length)))) + geom_bar(stat="identity",position="stack")
 #  ylim=c(0,round_any(max(flankMax,centerMax),50,f=ceiling))
   
 #  flankPlot<- ggplot(flankValues,aes(fill=name,y=value,x=reorder(Scaffold, desc(Length)))) +
