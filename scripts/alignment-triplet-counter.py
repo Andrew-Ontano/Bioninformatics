@@ -41,8 +41,8 @@ tsvWriter.writerow(["Scaffold", "Start", "End"]+queries)
 for entry in genome:
     i = window_lead
     while i+window_tail < len(genome[entry]) :
-        rowSeq = str(genome[entry][i-window_lead:i+window_tail].seq)
-        rowCounts = [str(rowSeq.upper().count(query)) for query in queries]
+        rowSeq = str(genome[entry][i-window_lead:i+window_tail].seq).upper()
+        rowCounts = [str(rowSeq.count(query)) for query in queries]
         rowText = [
             entry,
             i-window_lead+1,
@@ -51,8 +51,8 @@ for entry in genome:
         rowText += rowCounts
         tsvWriter.writerow(rowText)
         i += args.window_spacing
-    rowSeq = str(genome[entry][i-window_lead:i+window_tail].seq)
-    rowCounts = [str(rowSeq.upper().count(query)) for query in queries]
+    rowSeq = str(genome[entry][i-window_lead:i+window_tail].seq).upper()
+    rowCounts = [str(rowSeq.count(query)) for query in queries]
     rowText = [
             entry,
             i-window_lead+1,
