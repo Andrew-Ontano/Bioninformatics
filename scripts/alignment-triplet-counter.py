@@ -7,6 +7,15 @@ from Bio import SeqIO
 import csv
 from math import ceil, floor
 
+
+def windowCount(seq, queries):
+    counts = [0] * len(queries)
+    for i in range(0, len(seq) - 2):
+        if seq[i:i + 3] in queries:
+            counts[queries.index(seq[i:i + 3])] += 1
+    return counts
+
+
 parser = argparse.ArgumentParser(description='Count the prevalence of 3-mers from an alignment')
 parser.add_argument('-i', dest='genome_fasta', type=str, help='Input genome fasta')
 parser.add_argument('-w', dest='window_width', type=int, help='Window width', default='1000')
@@ -23,40 +32,41 @@ if not os.path.exists(args.genome_fasta):
     exit()
 
 # load genome file
-genome = SeqIO.to_dict(SeqIO.parse(args.genome_fasta,'fasta'))
+genome = SeqIO.to_dict(SeqIO.parse(args.genome_fasta, 'fasta'))
 # loop through remaining entries in order to find
-output = open(args.report_output, 'w',newline='')
+output = open(args.report_output, 'w', newline='')
 tsvWriter = csv.writer(output, delimiter='\t')
 
-window_lead = floor(args.window_width/2)
-window_tail = ceil(args.window_width/2)
+window_lead = floor(args.window_width / 2)
+window_tail = ceil(args.window_width / 2)
 
+bases = ["A", "C", "G", "T"]
+queries = [bases[a] + bases[b] + bases[c] for c in range(0, len(bases)) for b in range(0, len(bases)) for a in
+           range(0, len(bases))]
 
-#bases = ["A","C","G","T","N","-"]
-bases = ["A","C","G","T"]
-queries = [bases[a]+bases[b]+bases[c] for c in range(0,len(bases)) for b in range(0,len(bases)) for a in range(0,len(bases))]
-
-tsvWriter.writerow(["Scaffold", "Start", "End"]+queries)
+tsvWriter.writerow(["Scaffold", "Start", "End"] + queries)
 
 for entry in genome:
     i = window_lead
-    while i+window_tail < len(genome[entry]) :
-        rowSeq = str(genome[entry][i-window_lead:i+window_tail].seq).upper()
-        rowCounts = [str(rowSeq.count(query)) for query in queries]
+    while i + window_tail < len(genome[entry]):
+        rowSeq = str(genome[entry][i - window_lead:i + window_tail].seq).upper()
+        rowCounts = windowCount(rowSeq, queries)
+        # rowCounts = [str(rowSeq.count(query)) for query in queries]
         rowText = [
             entry,
-            i-window_lead+1,
-            i+window_tail
+            i - window_lead + 1,
+            i + window_tail
         ]
         rowText += rowCounts
         tsvWriter.writerow(rowText)
         i += args.window_spacing
-    rowSeq = str(genome[entry][i-window_lead:i+window_tail].seq).upper()
-    rowCounts = [str(rowSeq.count(query)) for query in queries]
+    rowSeq = str(genome[entry][i - window_lead:i + window_tail].seq).upper()
+    rowCounts = windowCount(rowSeq, queries)
+    # rowCounts = [str(rowSeq.count(query)) for query in queries]
     rowText = [
-            entry,
-            i-window_lead+1,
-            len(genome[entry])
+        entry,
+        i - window_lead + 1,
+        len(genome[entry])
     ]
     rowText += rowCounts
     tsvWriter.writerow(rowText)
