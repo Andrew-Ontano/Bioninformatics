@@ -48,7 +48,8 @@ if args.memory:
     removalList = r'[ACGT]' if args.keep_repeats else r'[acgt]'
     with open(args.output_sequence, 'w') as fileOutput:
         for seq in sequences:
-            fileOutput.write(f'>{sequences[seq].id}\n{re.sub(removalList, "N", str(sequences[seq].seq))}\n')
+            fileOutput.write(f'>{sequences[seq].id}\n')
+            fileOutput.write(f'{re.sub(removalList, "N", str(sequences[seq].seq))}\n')
 else:
     try:
         sequences = SeqIO.to_dict(SeqIO.parse(args.input_sequence, args.sequence_format))
