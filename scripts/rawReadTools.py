@@ -20,9 +20,7 @@ subparsers = parser.add_subparsers(title='RawReadTools', dest='subparsers', requ
 parserLengths = subparsers.add_parser("length", description="Get list of raw read lengths")
 parserLengths.add_argument('-i', '--input', dest='input_sequence', type=str, help='Input sequence file', required=True)
 parserLengths.add_argument('-f', '--format', dest='sequence_format', type=str, help='Input sequence format', default='fasta')
-parserLengths.add_argument('-o', '--output', dest='output_table', type=str, help='Output table file', required=True)
 parserLengths.add_argument('-m', '--memory', dest='memory', action='store_true', help='Use memory-conservation mode', default=False)
-parserLengths.add_argument('-k', '--kmer', dest='verbose', action='store_true', help='Calculates kmer max count length for kmer size 1 to 20', default=False)
 parserLengths.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose mode', default=True)
 
 parserMask = subparsers.add_parser("missing", description="Tabulate missing data as a proportion of the length of the read")
