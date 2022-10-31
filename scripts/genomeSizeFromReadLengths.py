@@ -29,6 +29,7 @@ with open(args.inFile, 'r') as inFile:
         lengths.append(int(line))
 
 totalLength = sum(lengths)
+logging.info(f'Starting coverage: {totalLength//args.size}')
 if isinstance(args.size, int):
     # sort lengths to downsample by length
     lengths.sort(reverse=True)
