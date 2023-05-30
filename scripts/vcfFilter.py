@@ -5,13 +5,6 @@
 import logging
 import argparse
 import os
-import time
-
-import pandas
-from Bio import SeqIO, Seq
-import re
-import pandas as pd
-import csv
 
 # Set up logger
 logging.basicConfig(level=logging.ERROR)
@@ -60,8 +53,14 @@ if '0' in targetColumns:
                             #print(line)
                             vcfOutput.write(line)
 elif args.outgroup_column == 0:
-    print("This is not supported yet, sorry!")
-    #run comparison here
+    logging.error("This is not supported yet, sorry!")
+
+    #genotypeTargetColumns = [genotypeColumns[int(a)-1] for a in targetColumns if a != '0']
+    #with open(args.input_vcf, 'r') as vcfInput, open(args.output_vcf, 'w') as vcfOutput:
+        #for line in vcfInput:
+            #if line.startswith('#'):
+                #vcfOutput.write(line)
+        #run comparison here
     pass
 else:
     genotypeTargetColumns = [genotypeColumns[int(a)-1] for a in args.target_columns.split(',')]
