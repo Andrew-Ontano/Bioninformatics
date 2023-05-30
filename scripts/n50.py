@@ -3,7 +3,6 @@
 ## calculate N50 from fasta file
 ## N50 = contig length such that half of the contigs are longer and 1/2 of contigs are shorter
 
-import commands
 import sys
 import os
 from itertools import groupby
@@ -25,7 +24,7 @@ with open(sys.argv[1]) as fasta:
 all_len=sorted(lengths, reverse=True)
 csum=numpy.cumsum(all_len)
 
-print "N: %d" % int(sum(lengths))
+print("N: %d" % int(sum(lengths)))
 n2=int(sum(lengths)/2)
 
 # get index for cumsum >= N/2
@@ -33,7 +32,7 @@ csumn2=min(csum[csum >= n2])
 ind=numpy.where(csum == csumn2)
 
 n50 = all_len[ind[0]]
-print "N50: %s" % n50
+print("N50: %s" % n50)
 
 ## N90
 nx90=int(sum(lengths)*0.90)
@@ -43,7 +42,7 @@ csumn90=min(csum[csum >= nx90])
 ind90=numpy.where(csum == csumn90)
 
 n90 = all_len[ind90[0]]
-print "N90: %s" % n90
+print("N90: %s" % n90)
 
 ## write lengths to file
 with open('all_lengths.txt', 'w') as handle:
