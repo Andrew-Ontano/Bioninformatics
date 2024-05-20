@@ -1,4 +1,5 @@
-#!/bin/python
+#!/usr/bin/env python3
+
 from Bio import AlignIO
 import gfapy
 import sys

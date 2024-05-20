@@ -65,7 +65,7 @@ with open(args.input_vcf, 'r') as vcfInput:
                 lineSplit = line.strip().split('\t')
                 for name in args.target_genotypes.strip().split(','):
                     genotypeNames[name] = lineSplit.index(name) if name in lineSplit else 0
-                    genotypeCounters[name] = [[0, 0, 0], 0, 0]
+                    genotypeCounters[name] = [[0, 0, 0], 0]
                 outgroupNames = (args.outgroup, lineSplit.index(args.outgroup)) if args.outgroup in lineSplit else (args.outgroup, 0)
 
                 if args.outgroup in genotypeNames:
