@@ -26,6 +26,8 @@ Mauve viewer: https://darlinglab.org/mauve/user-guide/viewer.html
   $Sequence.$Chrom", with a sequence of "N" the length of the alignment where a sequence was absent from the alignment.
 
 ## Running for example yeast dataset
+For testing this pipeline, we recommend using the Yeast dataset supplied with minigraph-cactus: https://github.com/ComparativeGenomicsToolkit/cactus/blob/master/examples/yeastPangenome.txt
+
 Construct the pangenome graph with minigraph-cactus:
 ```
 cactus-pangenome ./js ./examples/yeastPangenome.txt --reference S288C --outDir yeast-pg --outName yeast-pg --vcf --giraffe
