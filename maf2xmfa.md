@@ -37,5 +37,6 @@ From yeast-pg/chrom-alignments, convert the chromosome alignment for chrI from H
 cactus-hal2maf --chunkSize 1000000 --refGenome S288C ./js yeast-pg/chrom-alignments/chrI.hal yeast-pg/chrom-alignments/chrI.maf
 ```
 Convert the chromosome alignment from MAF into an XMFA
-``` python maf2xmfa.py -i yeast-pg/chrom-alignments/chrI.maf -o yeast-pg/chrom-alignments/chrI.xmfa ```
-
+```
+python maf2xmfa.py -i yeast-pg/chrom-alignments/chrI.maf -o yeast-pg/chrom-alignments/chrI.xmfa
+```
