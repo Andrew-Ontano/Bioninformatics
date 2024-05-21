@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from Bio import AlignIO
+from Bio import AlignIO, SeqIO
 import argparse
 import os
 import logging
@@ -21,8 +21,9 @@ logger = logging.getLogger()
 parser = argparse.ArgumentParser(description='maf2xmfa: a tool for converting maf to xmfa.')
 parser.add_argument('-i', '--input', dest='input_maf', type=str, help='Input MAF file', required=True)
 parser.add_argument('-o', '--output', dest='output_xmfa', type=str, help='Output XMFA file', required=True)
-parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose mode', default=False)
 parser.add_argument('-g', '--gappy', dest='gappy', action='store_true', help='Include gappy blocks', default=False)
+parser.add_argument('-f', '--fill', dest='fill', type=str, help='Cactus-style seqfile for filling unaligned segments. Otherwise filled with Ns', default=None)
+parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose mode', default=False)
 args = parser.parse_args()
 
 if args.verbose:
@@ -129,11 +130,24 @@ with open(args.output_xmfa, 'wb') as output_file, io.BufferedWriter(output_file)
             buffered_output.write(output_string.encode('utf-8'))
     # Create dummy blocks on the end of the file for all missing data
     output_string = f""
-    for sequence in unaligned_positions:
-        #sequenceUnalignedList = list(unaligned_positions[sequence])
-        if len(unaligned_positions[sequence])>0:
-            for rangePair in unaligned_positions[sequence]:
-                output_string += f"> {collection[sequence]}:{rangePair[0]}-{rangePair[1]} + {sequence}\n{textwrap.fill(str('N' * (rangePair[1] - rangePair[0] + 1)), break_long_words=True, break_on_hyphens=False, width=80)}\n=\n"
+    if args.fill and os.path.exists(args.fill):
+        fillPaths = {}
+        with open(args.fill, 'r') as fillFile:
+            for fillLine in fillFile:
+                fillLineSplit = fillLine.strip().split('\t')
+                fillPaths[fillLineSplit[0]] = SeqIO.index(fillLineSplit[1], "fasta")
+        for sequence in unaligned_positions:
+            if len(unaligned_positions[sequence])>0:
+                for rangePair in unaligned_positions[sequence]:
+                    output_string += f"> {collection[sequence]}:{rangePair[0]}-{rangePair[1]} + {sequence}\n{textwrap.fill(str(fillPaths[sequence.split('.')[0]][sequence.split('.')[1]][rangePair[0]-1:rangePair[1]].seq), break_long_words=True, break_on_hyphens=False, width=80)}\n=\n"
+
+    else:
+        if not os.path.exists(args.fill):
+            logger.error(f"Seqfil '{args.fill}' not found, defaulting to N-filling")
+        for sequence in unaligned_positions:
+            if len(unaligned_positions[sequence])>0:
+                for rangePair in unaligned_positions[sequence]:
+                    output_string += f"> {collection[sequence]}:{rangePair[0]}-{rangePair[1]} + {sequence}\n{textwrap.fill(str('N' * (rangePair[1] - rangePair[0] + 1)), break_long_words=True, break_on_hyphens=False, width=80)}\n=\n"
 
     buffered_output.write(output_string.encode('utf-8'))
     logger.info(f"File written to '{args.output_xmfa}', exiting.")
