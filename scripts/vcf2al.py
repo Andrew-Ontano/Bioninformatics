@@ -50,7 +50,7 @@ def windowScheme(length, size, spacing):
             break
     return outputIndices
 
-def pdToAlignment(df, ref=True):
+def pdToAlignment(df, ref=False):
     columnNames = df.columns[9:]
     nucleotideDict = {a: "" for a in columnNames}
     if ref:
@@ -89,12 +89,13 @@ def beautifyTree(tree):
 # Set up top level module argparser
 parser = argparse.ArgumentParser(description='vcf2al: a tool for producing fasta alignments from vcf of SNPs')
 parser.add_argument('-i', '--input', dest='input_vcf', type=str, help='Input VCF file', required=True)
-parser.add_argument('-o', '--output', dest='output_prefix', type=str, help='Output alignment prefix', default=None)
+#parser.add_argument('-o', '--output', dest='output_prefix', type=str, help='Output alignment prefix', default=None)
 parser.add_argument('-w', '--window-size', dest='size', type=int, help='Window size in # of VCF records to generate alignments from', default=10000)
 parser.add_argument('-s', '--window-overlap', dest='spacing', type=int, help='Window overlap in # of VCF records between each window. Can be negative for spaced windows', default=0)
-parser.add_argument('-m', '--missing-allowed', dest='missing', type=int, help="Maximum number of missing alleles per row", default=3)
-parser.add_argument('-c', '--compare', dest='compare', action='store_true', help='Perform comparison between species with windowed trees, then report distance from species tree', default=False)
-parser.add_argument('-t', '--tree-file', dest='tree', type=str, help="Species tree in newick format. If absent, species tree is generated from VCF", default=None)
+parser.add_argument('-m', '--missing-allowed', dest='missing', type=int, help="Maximum number of missing alleles per row", default=0)
+#parser.add_argument('-c', '--compare', dest='compare', action='store_true', help='Perform comparison between species with windowed trees, then report distance from species tree', default=False)
+parser.add_argument('-r', '--reference', dest='reference', action='store_true', help='Incorporate reference lineage into alignments', default=False)
+#parser.add_argument('-t', '--tree-file', dest='tree', type=str, help="Species tree in newick format. If absent, species tree is generated from VCF", default=None)
 #parser.add_argument('-t', '--targets', dest='target_genotypes', type=str, help='Genotype indices, separated by comma', nargs='*', required=True)
 parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose mode', default=False)
 parser.add_argument('-d', '--distance', dest='distance', type=str, help='Comma-separated list for genotypes for tip-distances. Calculate permutations between these samples. Use "All" to calculate all possible permutations.', default=None)
@@ -140,14 +141,16 @@ if args.compare:
 
 # Process vcf and window across chromosomes, finding alignments that match the thresholds
 if args.distance:
-    fullNames = list(filteredVCF.columns[8:])
-    fullNames[0] = 'Reference'
+    if args.reference:
+        fullNames = list(filteredVCF.columns[8:])
+        fullNames[0] = 'Reference'
+    else:
+        fullNames = list(filteredVCF.columns[9:])
     sampleNames = fullNames if args.distance == "All" else [a.strip() for a in args.distance.split(',') if a in fullNames]
     pairingList = [(a.strip(), b.strip()) for index, a in enumerate(sampleNames) for b in sampleNames[index + 1:]]
 else:
     pairingList = []
     sampleNames = []
-
 
 # Write and process header
 currentRow = f"Chromosome\tStart\tEnd\tBP\tNewick\t"+"\t"
@@ -159,7 +162,7 @@ for name, group in filteredVCF.groupby('#CHROM'):
     schemes = windowScheme(len(group), args.size, args.spacing)
     group = group.reset_index().drop(columns='index')
     for scheme in schemes:
-        schemeAlign = pdToAlignment(group[scheme[0]:scheme[1]])
+        schemeAlign = pdToAlignment(group[scheme[0]:scheme[1]], args.reference)
         schemeTree = buildTree(schemeAlign)
         schemeBranchLength = schemeTree.total_branch_length()
 
