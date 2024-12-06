@@ -2,25 +2,18 @@
 
 # given an input vcf file, output a subset based on genotype filtering
 
-import io
 import logging
 import argparse
 import os
-import vcf
-import vcf.filters
-import itertools
+
 import pandas as pd
-import numpy as np
-import math
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Align import MultipleSeqAlignment
 from Bio import Phylo
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 import gzip
-from skbio.stats.distance import mantel
 import re
-from collections import defaultdict
 
 # Set up logger
 logging.basicConfig(level=logging.ERROR)
