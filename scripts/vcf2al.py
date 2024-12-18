@@ -151,6 +151,7 @@ if args.distance:
     else:
         fullNames = list(filteredVCF.columns[9:])
     sampleNames = fullNames if args.distance == "All" else [a.strip() for a in args.distance.split(',') if a in fullNames]
+    print(sampleNames)
     pairingList = [(a.strip(), b.strip()) for index, a in enumerate(sampleNames) for b in sampleNames[index + 1:]]
 else:
     pairingList = []
@@ -193,6 +194,7 @@ with open(args.output_tsv, 'w') as outFile:
             currentRow = f"Window\t{name}\t{group.POS[int(scheme[0])]}\t{group.POS[int(scheme[1]) - 1]}\t{sum([len(a.seq.replace('-', '')) for a in schemeAlign])}\t{beautifyTree(schemeTree)}"
             if args.distance:
                 currentRow += "\t" + "\t".join([str(schemeTree.distance(a[0], a[1])/schemeBranchLength) for a in pairingList])
+                schemeTree.distance("B", "Reference")
                 # currentRow += "\t" + "\t".join([str(schemeTree.distance(a[0], a[1])/schemeBranchLength) for a in pairingList])
             outFile.write(currentRow+"\n")
 
