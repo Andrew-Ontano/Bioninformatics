@@ -153,6 +153,7 @@ if args.distance:
     sampleNames = fullNames if args.distance == "All" else [a.strip() for a in args.distance.split(',') if a in fullNames]
     print(sampleNames)
     pairingList = [(a.strip(), b.strip()) for index, a in enumerate(sampleNames) for b in sampleNames[index + 1:]]
+    print(pairingList)
 else:
     pairingList = []
     sampleNames = []
