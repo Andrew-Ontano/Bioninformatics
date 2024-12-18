@@ -76,7 +76,7 @@ def pdToAlignment(df, ref=False):
             refSeq += alleles[0]
         nucleotideDict["Reference"] = refSeq
         for a in range(len(alignment)):
-            alignment[a].seq = nucleotideDict[alignment[a].name]
+            alignment[a].seq = Seq(nucleotideDict[alignment[a].name])
     else:
         for row, record in df.iterrows():
             alleles = [record['REF']] + record['ALT'].split(',')
@@ -85,7 +85,7 @@ def pdToAlignment(df, ref=False):
                 nucleotideDict[column] += allele
 
         for a in range(len(alignment)):
-            alignment[a].seq = nucleotideDict[alignment[a].name]
+            alignment[a].seq = Seq(nucleotideDict[alignment[a].name])
 
     return alignment
 
@@ -193,6 +193,7 @@ with open(args.output_tsv, 'w') as outFile:
             currentRow = f"Window\t{name}\t{group.POS[int(scheme[0])]}\t{group.POS[int(scheme[1]) - 1]}\t{sum([len(a.seq.replace('-', '')) for a in schemeAlign])}\t{beautifyTree(schemeTree)}"
             if args.distance:
                 currentRow += "\t" + "\t".join([str(schemeTree.distance(a[0], a[1])/schemeBranchLength) for a in pairingList])
+                # currentRow += "\t" + "\t".join([str(schemeTree.distance(a[0], a[1])/schemeBranchLength) for a in pairingList])
             outFile.write(currentRow+"\n")
 
     if args.compare:
