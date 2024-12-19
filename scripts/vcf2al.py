@@ -10,7 +10,6 @@ import pandas as pd
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Align import MultipleSeqAlignment
-from Bio import Phylo
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 import gzip
 import re
@@ -115,6 +114,11 @@ def buildTree(alignment):
 def beautifyTree(tree):
     return re.sub(r'Inner\d+', '', str(tree.format(fmt='newick')).strip())
 
+# Function for testing formatting issues
+def testTree(tree):
+    pairingList = [(a.strip(), b.strip()) for index, a in enumerate(sampleNames) for b in sampleNames[index + 1:]]
+
+
 # Set up top level module argparser
 parser = argparse.ArgumentParser(description='vcf2al: a tool for producing fasta alignments from vcf of SNPs')
 parser.add_argument('-i', '--input', dest='input_vcf', type=str, help='Input VCF file', required=True)
@@ -151,9 +155,7 @@ if args.distance:
     else:
         fullNames = list(filteredVCF.columns[9:])
     sampleNames = fullNames if args.distance == "All" else [a.strip() for a in args.distance.split(',') if a in fullNames]
-    print(sampleNames)
     pairingList = [(a.strip(), b.strip()) for index, a in enumerate(sampleNames) for b in sampleNames[index + 1:]]
-    print(pairingList)
 else:
     pairingList = []
     sampleNames = []
@@ -195,7 +197,6 @@ with open(args.output_tsv, 'w') as outFile:
             currentRow = f"Window\t{name}\t{group.POS[int(scheme[0])]}\t{group.POS[int(scheme[1]) - 1]}\t{sum([len(a.seq.replace('-', '')) for a in schemeAlign])}\t{beautifyTree(schemeTree)}"
             if args.distance:
                 currentRow += "\t" + "\t".join([str(schemeTree.distance(a[0], a[1])/schemeBranchLength) for a in pairingList])
-                schemeTree.distance("B", "Reference")
                 # currentRow += "\t" + "\t".join([str(schemeTree.distance(a[0], a[1])/schemeBranchLength) for a in pairingList])
             outFile.write(currentRow+"\n")
 
