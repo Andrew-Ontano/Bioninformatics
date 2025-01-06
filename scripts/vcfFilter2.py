@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 import math
 import re
+import gzip
 
 # Set up logger
 logging.basicConfig(level=logging.ERROR)
@@ -39,9 +40,11 @@ window_size = 10000
 ##### End config
 
 
-
-
-vcfReport = vcf.Reader(open(args.input_vcf), 'r')
+if args.input_vcf.endswith('.gz'):
+    with gzip.open(args.input_vcf, 'rt') as inFile:
+        vcfReport = vcf.Reader(inFile)
+else:
+    vcfReport = vcf.Reader(open(args.input_vcf), 'r')
 
 # Filter out results with non-calls
 # Filter out only events with length change
@@ -78,6 +81,7 @@ else:
             for sample in sampleCallDict:
                 if len([a for a in sampleCallList if a == sampleCallDict[sample]]) == 1:
                     outputDict[record.CHROM][window][sample] += 1
+
 
     with open(f"{args.output_vcf}.tsv", 'w') as output:
         header = '\t'.join([a for a in sampleNames])
