@@ -106,11 +106,13 @@ def pdToAlignment(df, ref=False):
     #         alignment.append(columnSeqRecord)
     # return alignment
 
+## TODO: modify method to accept multiple tree construction methods
 def buildTree(alignment):
     calculator = DistanceCalculator('identity')
     constructor = DistanceTreeConstructor(calculator, 'nj')
     return constructor.build_tree(alignment)
 
+# Method for formatting the tree in a human-readable format (Newick)
 def beautifyTree(tree):
     return re.sub(r'Inner\d+', '', str(tree.format(fmt='newick')).strip())
 

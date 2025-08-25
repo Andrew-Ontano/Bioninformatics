@@ -1,9 +1,9 @@
-#!/bin/python3
-import os
+#!/usr/bin/env python3import os
 import argparse
 from Bio import SeqIO
 import csv
 from math import ceil, floor
+import os
 
 parser = argparse.ArgumentParser(description='Analyze a spectra 3-mer output for congruent areas')
 parser.add_argument('-i', dest='input_gff', type=str, help='Input gff file', required=True)

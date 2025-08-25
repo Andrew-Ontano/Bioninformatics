@@ -40,11 +40,17 @@ if(is.null(opt$input_filename)){
 data_long = data %>%
   pivot_longer(cols = names(data)[7:length(names(data))], names_to = "Pair", values_to = "Distance")
 
-p = ggplot(data_long%>%filter(Type=="Window")%>%filter(stringr::str_detect(Pair, opt$sample)), aes(x = (Start+End)/2, y = Distance, color=Pair)) +
-  geom_line(linewidth=.1) + scale_x_continuous(labels = scales::scientific_format(digits=2)) +
-  geom_smooth(se = FALSE, linewidth = 0.5, method="loess") +
-  theme_minimal()+theme(text = element_text(size=6), axis.text.x = element_text(size = 4)) + facet_wrap(~ Chromosome ,scales = "free_x")
-
+if(is.null(opt$sample){
+    p = ggplot(data_long%>%filter(Type=="Window"), aes(x = (Start+End)/2, y = Distance, color=Pair)) +
+      geom_line(linewidth=.1) + scale_x_continuous(labels = scales::scientific_format(digits=2)) +
+      geom_smooth(se = FALSE, linewidth = 0.5, method="loess") +
+      theme_minimal()+theme(text = element_text(size=6), axis.text.x = element_text(size = 4)) + facet_wrap(~ Chromosome ,scales = "free_x")
+}else{
+    p = ggplot(data_long%>%filter(Type=="Window")%>%filter(stringr::str_detect(Pair, opt$sample)), aes(x = (Start+End)/2, y = Distance, color=Pair)) +
+      geom_line(linewidth=.1) + scale_x_continuous(labels = scales::scientific_format(digits=2)) +
+      geom_smooth(se = FALSE, linewidth = 0.5, method="loess") +
+      theme_minimal()+theme(text = element_text(size=6), axis.text.x = element_text(size = 4)) + facet_wrap(~ Chromosome ,scales = "free_x")
+}
 if(opt$baseline){
   chromosomes = names(table(data$Chromosome))
   chromosomes = chromosomes[chromosomes!="All"]
