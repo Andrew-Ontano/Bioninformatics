@@ -40,7 +40,7 @@ if(is.null(opt$input_filename)){
 data_long = data %>%
   pivot_longer(cols = names(data)[7:length(names(data))], names_to = "Pair", values_to = "Distance")
 
-if(is.null(opt$sample){
+if(is.null(opt$sample)){
     p = ggplot(data_long%>%filter(Type=="Window"), aes(x = (Start+End)/2, y = Distance, color=Pair)) +
       geom_line(linewidth=.1) + scale_x_continuous(labels = scales::scientific_format(digits=2)) +
       geom_smooth(se = FALSE, linewidth = 0.5, method="loess") +
